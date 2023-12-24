@@ -1,3 +1,4 @@
+![Bellabeat logo](https://miro.medium.com/v2/resize:fit:1400/1*U4x0VzHWrRYZom1zFKQGIQ.png)
 # <span style="color:#8fce00"><u> Analytical report of Bellabeat fitness app data</u> </span>
 ​
 # <span style="color:#8fce00"> Table of Contents </span>
