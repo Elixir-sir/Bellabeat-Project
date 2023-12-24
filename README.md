@@ -122,9 +122,72 @@ After understanding the datasets and the business questions at hand, I will just
  * Daily_sleep 
  * Hourly_steps
 
-daily <- read.csv(file = "../input/bellabit/dailyActivity_merged.csv")
-hourlysteps <- read.csv(file = "../input/bellabit/hourlySteps_merged.csv")
-dailysleep <- read.csv(file = "../input/bellabit/sleepDay_merged.csv")
-intensity <- read.csv(file = "../input/bellabit/hourlyIntensities_merged.csv")
+* daily <- read.csv(file = "../input/bellabit/dailyActivity_merged.csv")
+* hourlysteps <- read.csv(file = "../input/bellabit/hourlySteps_merged.csv")
+* dailysleep <- read.csv(file = "../input/bellabit/sleepDay_merged.csv")
+* intensity <- read.csv(file = "../input/bellabit/hourlyIntensities_merged.csv")
 
+### 4.3 Preview our datasets <a class="anchor" id="preview_our_datasets_4_3"></a>
+ 
+ In this section, I will examine my chosen data frames and review the summary statistics for each column.
+
+head(daily)
+str(daily)
+
+head(hourlysteps)
+str(hourlysteps)
+
+head(dailysleep)
+str(dailysleep)
+
+### 4.4 Cleaning and formatting <a class="anchor" id="cleaning_and_formatting_4_4"></a>
+Having gained a better understanding of my data structures, I will proceed to process them, searching for any errors or inconsistencies.
+​
+#### 4.4.1 Veryfying number of users
+Before I continue with my cleaning process, I want to determine the number of unique users in each data frame.
+
+n_unique(daily$Id)
+n_unique(hourlysteps$Id)
+n_unique(dailysleep$Id)
+
+The result shows 33, 33 and 24 for number of users represening daily activities, hourlystep and daily sleeps repectively.
+
+#### 4.4.2 Duplicates
+A quick search for any duplicate:
+
+sum(duplicated(daily))
+sum(duplicated(hourlysteps))
+sum(duplicated(dailysleep))
+
+The result shows 0, 0 and 3 indicating no duplication in daily activities and hourly sleeps datasets. 3 duplicates in daily sleep which i will be handling next.
+
+#### 4.4.3 Remove duplicates and N/A
+Removing the 3 duplicates seen in dailysleep dataframe.
+
+daily <- daily %>%
+  distinct() %>%
+  drop_na()
+
+hourlysteps <- hourlysteps %>%
+  distinct() %>%
+  drop_na()
+
+dailysleep <- dailysleep %>%
+  distinct() %>%
+  drop_na()
+
+#### 4.4.4 Clean and rename columns 
+I want to ensure that column names have the correct syntax and consistent format across all datasets, as we will be merging them later on. I am changing the format of all columns to lowercase.
+
+* clean_names(daily)
+daily<- rename_with(daily, tolower)
+
+* clean_names(hourlysteps)
+hourlysteps <- rename_with(hourlysteps, tolower)
+
+* clean_names(dailysleep)
+dailysleep <- rename_with(dailysleep, tolower)
+
+#### 4.4.5 Consistency of date and time columns
+I will concentrate on cleaning the date-time format for daily_activity and daily_sleep since I will be merging both data frames. Since the time component in the daily_sleep data frame is not needed, I will use 'as_date' instead of 'as_datetime
 ​
