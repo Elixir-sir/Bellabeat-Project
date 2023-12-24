@@ -42,5 +42,51 @@ Stakeholders
 ​
 * Urška Sršen - Bellabeat cofounder and Chief Creative Officer 
 * Sando Mur - Bellabeat cofounder and key member of Bellabeat executive team 
-* Bellabeat Marketing Analytics team 
+* Bellabeat Marketing Analytics team
+
+## <span style="color:#8fce00"> 3. Prepare Phase </span> <a class="anchor" id="prepare_phase_3"></a> 
+
+#### 3.1 Dataset used: <a class="anchor" id="dataset_used_3_1"></a> 
+
+The dataset i used in analytical case study originates from FitBit Fitness Tracker Data, which is hosted on Kaggle.
+#### 3.2 Accessibility and privacy of data: <a class="anchor" id="accessibility_and_privacy_of_data_3_2"></a> 
+Upon verifying the dataset's metadata, i could affirm its open-source nature. The owner has relinquished all rights to the work worldwide under copyright law, including related and extending rights, to the extent permitted by law. This means that any body that comes across this piece is free to copy, adapt, distribute, and utilize the work, including for commercial purposes, without the need for prior permission.
+#### 3.3 Information about our dataset:<a class="anchor" id="information_about_our_dataset_3_3"></a> 
+
+These datasets were created through a survey conducted on Amazon Mechanical Turk from March 12, 2016, to May 12, 2016. Thirty qualified Fitbit users gave their consent to share personal tracker data, which includes minute-level details about physical activity, heart rate, and sleep monitoring. Differences in the data stem from the use of various Fitbit trackers and individual tracking habits and preferences.
+
+#### 3.4 Data Organization and verification: <a class="anchor" id="data_organization_and_verification_3_4"></a> 
+
+The bellabeat dataset file i downloaded has 18 CSV files, with each file containing distinct quantitative data tracked by Fitbit App. The data is structured longitudinally, meaning each row corresponds to a specific time point for an individual. Consequently, each user possesses multiple rows of data, each identified by a unique ID and recorded based on date and time.
+
+Given the relatively small sample size, I organized and refined the tables by creating Pivot Tables in Excel. This allowed me to assess the characteristics and observations within each table and to examine the relationships between these tables. I also determined the sample size (number of users) for each table and confirmed that the analysis covers a time span of 31 days.
+
+| Table Name | Type | Description |
+| --- | --- | --- |
+| dailyActivity_merged | Microsoft Excel CSV | Daily Activity over 31 days of 33 users. Tracking daily: Steps, Distance, Intensities, Calories |
+|dailyCalories_merged | Microsoft Excel CSV | Daily Calories over 31  days of 33 users |
+| dailyIntensities_merged | Microsoft Excel CSV | Daily Intensity over 31 days of 33 users. Measured in Minutes and Distance, dividing groups in 4 categories: Sedentary, Lightly Active, Fairly Active,Very Active |
+| dailySteps_merged | Microsoft Excel CSV | Daily Steps over 31 days of 33 users | 
+| heartrate_seconds_merged | Microsoft Excel CSV | Exact day and time heartrate logs for just 7 users |
+| hourlyCalories_merged | Microsoft Excel CSV | Hourly Calories burned over 31 days of 33 users |
+| hourlyIntensities_merged | Microsoft Excel CSV | Hourly total and average intensity over 31 days of 33 users |
+| hourlySteps_merged | Microsoft Excel CSV | Hourly Steps over 31 days of 33 users |
+| minuteCaloriesNarrow_merged | Microsoft Excel CSV | Calories burned every minute over 31 days of 33 users (Every minute in single row)|
+| minuteCaloriesWide_merged | Microsoft Excel CSV | Calories burned every minute over 31 days of 33 users (Every minute in single column)|
+| minuteIntensitiesNarrow_merged | Microsoft Excel CSV | Intensity counted by minute over 31 days of 33 users (Every minute in single row) |
+| minuteIntensitiesWide_merged | Microsoft Excel CSV | Intensity counted by minute over 31 days of 33 users (Every minute in single column)|
+| minuteMETsNarrow_merged | Microsoft Excel CSV | Ratio of the energy you are using in a physical activity compared to the energy you would use at rest. Counted in minutes |
+| minuteSleep_merged | Microsoft Excel CSV | Log Sleep by Minute for 24 users over 31 days. Value column not specified |
+| minuteStepsNarrow_merged | Microsoft Excel CSV | Steps tracked every minute over 31 days of 33 users (Every minute in single row)|
+| minuteStepsWide_merged | Microsoft Excel CSV | Steps tracked every minute over 31 days of 33 users (Every minute in single column) |
+| sleepDay_merged | Microsoft Excel CSV| Daily sleep logs, tracked by: Total count of sleeps a day, Total minutes, Total Time in Bed |
+| weightLogInfo_merged | Microsoft Excel CSV | Weight track by day in Kg and Pounds over 30 days. Calculation of BMI.5 users report weight manually 3 users not.In total there are 8 users |
+
+#### 3.5 Data Credibility and Integrity:<a class="anchor" id="data_credibility_and_integrity_3_5"></a>
+
+Due to the limitation of size (33 users) and not having any demographic information, I could encounter a sampling bias. I am not sure if the sample is representative of the population as a whole. Another problem I would encounter is that the dataset is not current, and there's also the time limitation of the survey (2 months long). That's why I will give my case study an operational approach.
+    
+# <span style="color:#8fce00">  4. Process Phase </span> <a class="anchor" id="process_phase_4"></a> 
+ 
+I will center my analysis on R because of its accessibility, the volume of available data, and its capacity to generate data visualizations for communicating my findings to stakeholders.
 ​
