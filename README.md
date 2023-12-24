@@ -90,4 +90,41 @@ Due to the limitation of size (33 users) and not having any demographic informat
 # <span style="color:#8fce00">  4. Process Phase </span> <a class="anchor" id="process_phase_4"></a> 
  
 I will center my analysis on R because of its accessibility, the volume of available data, and its capacity to generate data visualizations for communicating my findings to stakeholders.
+
+### 4.1 Installing packages and opening libraries <a class="anchor" id="installing_packages_and_opening_libraries_4_1"></a> 
+
+I will be installing the packages that will help my analysis only. 
+I will use the following packages for the analysis: 
+
+* tidyverse
+* here
+* skimr
+* janitor
+* lubridate
+* ggpubr
+* ggrepel
+
+library(tidyverse)
+library(here)
+library(skimr)
+library(janitor)
+library(lubridate)
+library(ggrepel)
+library(magrittr)
+library(ggplot2)
+library(patchwork)
+
+### 4.2 Importing datasets <a class="anchor" id="importing_datasets_4_2"></a>
+
+After understanding the datasets and the business questions at hand, I will just go ahead and import the necessary datasets that will help me answer the business questions. 
+ 
+ * Daily_activity 
+ * Daily_sleep 
+ * Hourly_steps
+
+daily <- read.csv(file = "../input/bellabit/dailyActivity_merged.csv")
+hourlysteps <- read.csv(file = "../input/bellabit/hourlySteps_merged.csv")
+dailysleep <- read.csv(file = "../input/bellabit/sleepDay_merged.csv")
+intensity <- read.csv(file = "../input/bellabit/hourlyIntensities_merged.csv")
+
 ​
