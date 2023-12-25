@@ -150,8 +150,6 @@ n_unique(daily$Id)
 n_unique(hourlysteps$Id)
 n_unique(dailysleep$Id)
 
-![image](https://github.com/Elixir-sir/Bellabeat-Project/assets/150801856/dabce4f2-687c-4077-b4b7-3e087055a06e)
-
 #### Result: The result shows 33, 33 and 24 for number of users represening daily activities, hourlystep and daily sleeps repectively.
 
 
