@@ -155,6 +155,7 @@ n_unique(daily$Id)
 n_unique(hourlysteps$Id)
 n_unique(dailysleep$Id)
 ```
+
 #### Result: The result shows 33, 33 and 24 for number of users represening daily activities, hourlystep and daily sleeps repectively.
 
 
@@ -240,6 +241,7 @@ daily_average <- daily_act_sleep %>%
   summarise (mean_daily_steps = mean(totalsteps), mean_daily_calories = mean(calories), mean_daily_sleep = mean(totalminutesasleep))
 ```
 Now, I will categorize our users based on their daily average step counts.
+
 ```R
 user_type <- daily_average %>%
   mutate(user_type = case_when(
@@ -280,6 +282,8 @@ user_type_percent %>%
             position = position_stack(vjust = 0.5))+
   labs(title="User type distribution")
 ```
+![image](https://github.com/Elixir-sir/Bellabeat-Project/assets/150801856/34410c62-1f14-42a1-8d52-c803875761c8)
+
 ### 5.2 Steps and minutes asleep per weekday <a class="anchor" id="steps_and_minutes_asleep_per_weekday"></a>
 Now, I aim to determine the days of the week when users are most active and when they tend to sleep more. Additionally, I will check if users meet the recommended daily step and sleep goals.
 ​
@@ -318,6 +322,8 @@ Now, I will be using patchwork(R library) to arrange the plots as a single plot
 ```R
 steps_perweekday + sleep_perweekday
 ```
+![image](https://github.com/Elixir-sir/Bellabeat-Project/assets/150801856/d01823c0-31fb-42fa-959a-6830a6c02926)
+
 In the charts above, we can deduce the following:
 ​
  * Users achieve the recommended daily step count of 7500 steps every day except on Sundays.
@@ -342,6 +348,8 @@ ggplot(data=int_new, aes(x=time, y=mean_total_int)) + geom_histogram(stat = "ide
   theme(axis.text.x = element_text(angle = 90)) +
   labs(title="Average Total Intensity vs. Time")
 ```
+![image](https://github.com/Elixir-sir/Bellabeat-Project/assets/150801856/b1721726-441a-4de5-ad29-a6e0223aa8ed)
+
 Upon examining the hourly visualization of Total Intensity, it became evident that individuals tend to be most active from 5 am to 10 pm. The peak of activity occurs during the hours of 5 pm to 7 pm.
 
 ### 5.4 Correlations <a class="anchor" id="correlations"></a>
@@ -369,6 +377,8 @@ steps_and_calories <- ggplot(daily_act_sleep, aes(x=totalsteps, y=calories))+
 ```R
 steps_and_sleep + steps_and_calories
 ```
+![image](https://github.com/Elixir-sir/Bellabeat-Project/assets/150801856/0846af2c-a6ad-43f4-a1f3-fb4088a9d1e0)
+
 Judging from the combined plots above, i was able to deduced the following: 
 
 * No significant correlation exists between users' daily activity levels, as measured by the number of steps, and their daily sleep duration.
@@ -432,6 +442,8 @@ daily_use_percent %>%
                                  "Low use - 1 to 10 days"))+
   labs(title="Daily use of smart device")
 ```
+![image](https://github.com/Elixir-sir/Bellabeat-Project/assets/150801856/d3ab8f97-8444-4c40-bc10-3d616c067241)
+
 Analyzing the results, it's evident that:
 ​
 - 50% of the users in our sample use their device frequently, ranging from 21 to 31 days.
@@ -584,7 +596,46 @@ low_use <- ggplot(minutes_worn_lowuse, aes(x="",y=total_percent, fill=worn)) +
 ```R
 minutes_percent + high_use + mod_use + low_use
 ```
-![image](https://github.com/Elixir-sir/Bellabeat-Project/assets/150801856/126336ee-c3fd-4996-a979-1847aaaac868)
+![image](https://github.com/Elixir-sir/Bellabeat-Project/assets/150801856/4d6cfaf6-c12e-44ba-baee-e93ae94428de)
+
+As per our plots, we can observe that:
+
+* 36% of all users wear the device all day long.
+* 60% wear it for more than half the day.
+* Only 4% wear it for less than half of the day.
+
+When we filter the total users based on both their device usage over the days and the duration they wear the device each day, we obtain the following insights:
+Just to recap:
+* High use: Users who use their device between 21 and 31 days.
+* Moderate use: Users who use their device between 10 and 20 days.
+* Low use: Users who use their device between 1 and 10 days.
+
+Among high users, only **6.8%** of those who have used their device between 21 and 31 days wear it all day. A significant **88.9%** wear the device for more than half of the day but not the entire day.
+
+Moderate users tend to wear the device less on a daily basis.
+
+Low users, on the other hand, tend to wear their device for more extended periods on the days they use it.
+
+# <span style="color:#8fce00"> 6. Conclusion (Act Phase) </span> <a class="anchor" id="conclusion_act_phase"></a>
+​
+Bellabeat's mission is to empower women by equipping them with the data to explore their individuality.
+​
+To effectively address our business objectives and contribute to Bellabeat's mission, I recommend utilizing proprietary tracking data for more in-depth analysis. The datasets we've used are limited in sample size and may carry biases, given the absence of user demographic information. Given that our primary target audience comprises young and adult women, I strongly advise continuing to uncover trends that will enable the creation of a marketing strategy tailored to them.
+​
+With that in mind, following our analysis, we've identified various trends that could enhance our online campaign and enhance the **Bellabeat app**:
+​
+|Recommendation| Description |
+|---| ---|
+|1. Daily notifications for step counts and in-app posts.| We've categorized users into four groups and observed that, on average, users walk more than 7,500 steps daily, except on Sundays. To promote a healthy lifestyle, we can motivate our customers to achieve the daily CDC-recommended step count of 8,000 by **sending them reminders if they haven't met the goal**. Additionally, we can create informative posts within our app to explain the benefits of reaching this step count, as the CDC highlights that a higher step count is associated with a lower mortality rate. Our analysis has also revealed a positive correlation between the number of steps and the calories burned.
+|3. Notification and Sleep Strategies| According to our findings, users tend to sleep for less than 8 hours a day. To address this, **they could establish a preferred bedtime and receive notifications a few minutes before to prepare for sleep**. Additionally, we can provide valuable resources to assist customers in improving their sleep quality, such as breathing exercises, podcasts with relaxing music, and sleep techniques.|
+|2. Incentive Program | We understand that notifications may not be motivating for everyone. As an alternative approach, we could introduce a limited-time game within our app. The game would involve progressing through different levels based on the number of steps walked each day. To advance to the next level, users would need to maintain their activity level over a specified period, such as a month. Achieving each level would earn users a certain number of stars, which they could redeem for merchandise or discounts on other Bellabeat products.|
+​
+In our analysis, we not only examined trends in daily user habits but also uncovered that only 50% of our users use their Bellabeat devices on a daily basis. Furthermore, just 36% of users wear the device throughout the entire day when they do use it. To address this, we can continue to promote the key features of Bellabeat products, emphasizing their water resistance, long-lasting batteries, and fashionable and elegant designs. These products can be worn every day and to any occasion without the need to worry about the battery life.
+​
+### <span style="color:#8fce00"> **In God we trust, all others bring data. - W. Edwards Deming. Therefore, take Control of Your Future by Owning Your Data** </span>
+        
+​
+​
 
 
 
