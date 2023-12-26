@@ -432,7 +432,160 @@ daily_use_percent %>%
                                  "Low use - 1 to 10 days"))+
   labs(title="Daily use of smart device")
 ```
-![Uploading image.png…]()
+Analyzing the results, it's evident that:
+​
+- 50% of the users in our sample use their device frequently, ranging from 21 to 31 days.
+- 12% use their device for 11 to 20 days.
+- 38% of our sample use their device really rarely.
+​
+#### 5.5.2 Time used smart device <a class="anchor" id="time_used_smart_device"></a>
+​
+Being more precise, I want to determine the daily duration of device usage by users. To do that, I will merge the daily_use data frame with the daily_activity data frame, allowing me to filter results based on the daily use of the device as well.
+```R
+daily_use_merged <- merge(daily, daily_use, by=c ("id"))
+```
+I need to create a new data frame that calculates the total daily duration users wore the device. I will create three different categories based on the daily usage:
+​
+* All day: The device was worn throughout the entire day.
+* More than half day: The device was worn for more than half of the day.
+* Less than half day: The device was worn for less than half of the day.
+```R
+minutes_worn <- daily_use_merged %>% 
+  mutate(total_minutes_worn = veryactiveminutes+fairlyactiveminutes+lightlyactiveminutes+sedentaryminutes)%>%
+  mutate (percent_minutes_worn = (total_minutes_worn/1440)*100) %>%
+  mutate (worn = case_when(
+    percent_minutes_worn == 100 ~ "All day",
+    percent_minutes_worn < 100 & percent_minutes_worn >= 50~ "More than half day", 
+    percent_minutes_worn < 50 & percent_minutes_worn > 0 ~ "Less than half day"
+  ))
+```
+As previously done, for a more effective visualization of the results, I will create four separate data frames. Later, we will combine them for a unified visualization.
+
+* The first data frame will display the total number of users and calculate the percentage of minutes the device was worn, considering the three categories created.
+
+* The three other data frames are filtered by the daily use category to illustrate the variations in both daily device usage and duration.
+```R
+minutes_worn_percent<- minutes_worn%>%
+  group_by(worn) %>%
+  summarise(total = n()) %>%
+  mutate(totals = sum(total)) %>%
+  group_by(worn) %>%
+  summarise(total_percent = total / totals) %>%
+  mutate(labels = scales::percent(total_percent))
+
+minutes_worn_highuse <- minutes_worn%>%
+  filter (usage == "high use")%>%
+  group_by(worn) %>%
+  summarise(total = n()) %>%
+  mutate(totals = sum(total)) %>%
+  group_by(worn) %>%
+  summarise(total_percent = total / totals) %>%
+  mutate(labels = scales::percent(total_percent))
+
+minutes_worn_moduse <- minutes_worn%>%
+  filter(usage == "moderate use") %>%
+  group_by(worn) %>%
+  summarise(total = n()) %>%
+  mutate(totals = sum(total)) %>%
+  group_by(worn) %>%
+  summarise(total_percent = total / totals) %>%
+  mutate(labels = scales::percent(total_percent))
+
+minutes_worn_lowuse <- minutes_worn%>%
+  filter (usage == "low use") %>%
+  group_by(worn) %>%
+  summarise(total = n()) %>%
+  mutate(totals = sum(total)) %>%
+  group_by(worn) %>%
+  summarise(total_percent = total / totals) %>%
+  mutate(labels = scales::percent(total_percent))
+
+minutes_worn_highuse$worn <- factor(minutes_worn_highuse$worn, levels = c("All day", "More than half day", "Less than half day"))
+minutes_worn_percent$worn <- factor(minutes_worn_percent$worn, levels = c("All day", "More than half day", "Less than half day"))
+minutes_worn_moduse$worn <- factor(minutes_worn_moduse$worn, levels = c("All day", "More than half day", "Less than half day"))
+minutes_worn_lowuse$worn <- factor(minutes_worn_lowuse$worn, levels = c("All day", "More than half day", "Less than half day"))
+```
+Now that I've created the four data frames and organized the device wear level categories, I can present our results in the following plots. These plots have been grouped together for improved visualization.
+```R
+minutes_percent <- ggplot(minutes_worn_percent, aes(x="",y=total_percent, fill=worn)) +
+  geom_bar(stat = "identity", width = 1)+
+  coord_polar("y", start=0)+
+  theme_minimal()+
+  theme(axis.title.x= element_blank(),
+        axis.title.y = element_blank(),
+        panel.border = element_blank(), 
+        panel.grid = element_blank(), 
+        axis.ticks = element_blank(),
+        axis.text.x = element_blank(),
+        plot.title = element_text(hjust = 0.5, size=14, face = "bold"),
+        plot.subtitle = element_text(hjust = 0.5)) +
+    scale_fill_manual(values = c("#004d99", "#3399ff", "#cce6ff"))+
+  geom_text(aes(label = labels),
+            position = position_stack(vjust = 0.5), size = 3.5)+
+  labs(title="Time worn per day", subtitle = "Total Users")
+```
+```R
+high_use <-  ggplot(minutes_worn_highuse, aes(x="",y=total_percent, fill=worn)) +
+  geom_bar(stat = "identity", width = 1)+
+  coord_polar("y", start=0)+
+  theme_minimal()+
+  theme(axis.title.x= element_blank(),
+        axis.title.y = element_blank(),
+        panel.border = element_blank(), 
+        panel.grid = element_blank(), 
+        axis.ticks = element_blank(),
+        axis.text.x = element_blank(),
+        plot.title = element_text(hjust = 0.5, size=14, face = "bold"),
+        plot.subtitle = element_text(hjust = 0.5), 
+        legend.position = "none")+
+    scale_fill_manual(values = c("#004d99", "#3399ff", "#cce6ff"))+
+  geom_text_repel(aes(label = labels),
+            position = position_stack(vjust = 0.5), size = 3)+
+  labs(title="", subtitle = "High use - Users")
+```
+```R
+mod_use <- ggplot(minutes_worn_moduse, aes(x="",y=total_percent, fill=worn)) +
+  geom_bar(stat = "identity", width = 1)+
+  coord_polar("y", start=0)+
+  theme_minimal()+
+  theme(axis.title.x= element_blank(),
+        axis.title.y = element_blank(),
+        panel.border = element_blank(), 
+        panel.grid = element_blank(), 
+        axis.ticks = element_blank(),
+        axis.text.x = element_blank(),
+        plot.title = element_text(hjust = 0.5, size=14, face = "bold"), 
+        plot.subtitle = element_text(hjust = 0.5),
+        legend.position = "none") +
+    scale_fill_manual(values = c("#004d99", "#3399ff", "#cce6ff"))+
+  geom_text(aes(label = labels),
+            position = position_stack(vjust = 0.5), size = 3)+
+  labs(title="", subtitle = "Moderate use - Users")
+```
+```R
+low_use <- ggplot(minutes_worn_lowuse, aes(x="",y=total_percent, fill=worn)) +
+  geom_bar(stat = "identity", width = 1)+
+  coord_polar("y", start=0)+
+  theme_minimal()+
+  theme(axis.title.x= element_blank(),
+        axis.title.y = element_blank(),
+        panel.border = element_blank(), 
+        panel.grid = element_blank(), 
+        axis.ticks = element_blank(),
+        axis.text.x = element_blank(),
+        plot.title = element_text(hjust = 0.5, size=14, face = "bold"), 
+        plot.subtitle = element_text(hjust = 0.5),
+        legend.position = "none") +
+    scale_fill_manual(values = c("#004d99", "#3399ff", "#cce6ff"))+
+  geom_text(aes(label = labels),
+            position = position_stack(vjust = 0.5), size = 3)+
+  labs(title="", subtitle = "Low use - Users")
+```
+```R
+minutes_percent + high_use + mod_use + low_use
+```
+![image](https://github.com/Elixir-sir/Bellabeat-Project/assets/150801856/126336ee-c3fd-4996-a979-1847aaaac868)
+
 
 
 ​
