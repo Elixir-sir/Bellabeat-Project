@@ -104,16 +104,7 @@ I will use the following packages for the analysis:
 * ggpubr
 * ggrepel
 
-``` R
-library(tidyverse)
-library(here)
-library(skimr)
-library(janitor)
-library(lubridate)
-library(ggrepel)
-library(magrittr)
-library(ggplot2)
-library(patchwork) ``` 
+ ```R library(tidyverse)library(here)library(skimr)library(janitor)library(lubridate)library(ggrepel)library(magrittr)library(ggplot2)library(patchwork)```
   
 ### 4.2 Importing datasets <a class="anchor" id="importing_datasets_4_2"></a>
 
