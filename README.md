@@ -155,6 +155,7 @@ n_unique(daily$Id)
 n_unique(hourlysteps$Id)
 n_unique(dailysleep$Id)
 ```
+![image](https://github.com/Elixir-sir/Bellabeat-Project/assets/150801856/83c68a52-cd7f-41b8-9339-cc0c0161621f)
 
 #### Result: The result shows 33, 33 and 24 for number of users represening daily activities, hourlystep and daily sleeps repectively.
 
@@ -442,7 +443,8 @@ daily_use_percent %>%
                                  "Low use - 1 to 10 days"))+
   labs(title="Daily use of smart device")
 ```
-![image](https://github.com/Elixir-sir/Bellabeat-Project/assets/150801856/d3ab8f97-8444-4c40-bc10-3d616c067241)
+![image](https://github.com/Elixir-sir/Bellabeat-Project/assets/150801856/c5ead113-c4e7-4122-8940-c360d34b505a)
+
 
 Analyzing the results, it's evident that:
 ​
@@ -632,7 +634,7 @@ With that in mind, following our analysis, we've identified various trends that 
 ​
 In our analysis, we not only examined trends in daily user habits but also uncovered that only 50% of our users use their Bellabeat devices on a daily basis. Furthermore, just 36% of users wear the device throughout the entire day when they do use it. To address this, we can continue to promote the key features of Bellabeat products, emphasizing their water resistance, long-lasting batteries, and fashionable and elegant designs. These products can be worn every day and to any occasion without the need to worry about the battery life.
 ​
-### <span style="color:#8fce00"> **In God we trust, all others bring data. - W. Edwards Deming. Therefore, take Control of Your Future by Owning Your Data** </span>
+### <span style="color:#8fce00"> **In God we trust, all others, bring data. - W. Edwards Deming. Therefore, take Control of Your Future by Owning Your Data** </span>
         
 ​
 ​
