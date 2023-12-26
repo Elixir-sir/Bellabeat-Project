@@ -104,6 +104,7 @@ I will use the following packages for the analysis:
 * ggpubr
 * ggrepel
 
+``` R
 library(tidyverse)
 library(here)
 library(skimr)
@@ -112,8 +113,8 @@ library(lubridate)
 library(ggrepel)
 library(magrittr)
 library(ggplot2)
-library(patchwork)
-
+library(patchwork) ``` 
+  
 ### 4.2 Importing datasets <a class="anchor" id="importing_datasets_4_2"></a>
 
 After understanding the datasets and the business questions at hand, I will just go ahead and import the necessary datasets that will help me answer the business questions. 
