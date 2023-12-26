@@ -342,5 +342,97 @@ ggplot(data=int_new, aes(x=time, y=mean_total_int)) + geom_histogram(stat = "ide
   theme(axis.text.x = element_text(angle = 90)) +
   labs(title="Average Total Intensity vs. Time")
 ```
+Upon examining the hourly visualization of Total Intensity, it became evident that individuals tend to be most active from 5 am to 10 pm. The peak of activity occurs during the hours of 5 pm to 7 pm.
+
+### 5.4 Correlations <a class="anchor" id="correlations"></a>
+
+We will now determine if there is any correlation between different variables: 
+
+* Daily steps and daily sleep
+* Daily steps and calories
+```R
+steps_and_sleep <- ggplot(daily_act_sleep, aes(x=totalsteps, y=totalminutesasleep))+
+  geom_jitter() +
+  geom_smooth(color = "red") + 
+  labs(title = "Daily steps vs Minutes asleep", x = "Daily steps", y= "Minutes asleep") +
+   theme(panel.background = element_blank(),
+        plot.title = element_text( size=14))
+```
+```R
+steps_and_calories <- ggplot(daily_act_sleep, aes(x=totalsteps, y=calories))+
+  geom_jitter() +
+  geom_smooth(color = "red") + 
+  labs(title = "Daily steps vs Calories", x = "Daily steps", y= "Calories") +
+   theme(panel.background = element_blank(),
+        plot.title = element_text( size=14))
+```
+```R
+steps_and_sleep + steps_and_calories
+```
+Judging from the combined plots above, i was able to deduced the following: 
+
+* No significant correlation exists between users' daily activity levels, as measured by the number of steps, and their daily sleep duration.
+
+* Otherwise, i should have seen a  positive correlation between the number of steps taken and the calories burned. Normal expectation is that, the more steps walked should result in a higher calorie expenditure. 
+
+### 5.5 Use of smart device <a class="anchor" id="use_of_smart_device"></a> 
+
+#### 5.5.1 Days used smart device <a class="anchor" id="days_used_smart_device"></a>
+
+Now that I have seen some trends in activity, sleep, and calories burned, I want to understand how often the users in my sample use their device. That way, I can plan my marketing strategy and identify which features would benefit the use of smart devices.
+
+I will calculate the number of users who use their smart device on a daily basis, classifying my sample into three categories, knowing that the date interval is 31 days:
+
+High use: Users who use their device between 21 and 31 days.
+Moderate use: Users who use their device between 10 and 20 days.
+Low use: Users who use their device between 1 and 10 days.
+First, I will create a new data frame by grouping by ID, calculating the number of days used, and creating a new column with the explained classification above.
+```R
+daily_use <- daily_act_sleep %>%
+  group_by(id) %>%
+  summarize(days_used=sum(n())) %>%
+  mutate(usage = case_when(
+    days_used >= 1 & days_used <= 10 ~ "low use",
+    days_used >= 11 & days_used <= 20 ~ "moderate use", 
+    days_used >= 21 & days_used <= 31 ~ "high use", 
+  ))
+  ```
+
+I will now create a percentage data frame to enhance the visualization of the results in the graph. I am also ordering the usage levels.
+```R
+daily_use_percent <- daily_use %>%
+  group_by(usage) %>%
+  summarise(total = n()) %>%
+  mutate(totals = sum(total)) %>%
+  group_by(usage) %>%
+  summarise(total_percent = total / totals) %>%
+  mutate(labels = scales::percent(total_percent))
+
+daily_use_percent$usage <- factor(daily_use_percent$usage, levels = c("high use", "moderate use", "low use"))
+```
+Now that I have my new table, I can create my plot.
+```R
+daily_use_percent %>%
+  ggplot(aes(x="",y=total_percent, fill=usage)) +
+  geom_bar(stat = "identity", width = 1)+
+  coord_polar("y", start=0)+
+  theme_minimal()+
+  theme(axis.title.x= element_blank(),
+        axis.title.y = element_blank(),
+        panel.border = element_blank(), 
+        panel.grid = element_blank(), 
+        axis.ticks = element_blank(),
+        axis.text.x = element_blank(),
+        plot.title = element_text(hjust = 0.5, size=14, face = "bold")) +
+  geom_text(aes(label = labels),
+            position = position_stack(vjust = 0.5))+
+  scale_fill_manual(values = c("#006633","#00e673","#80ffbf"),
+                    labels = c("High use - 21 to 31 days",
+                                 "Moderate use - 11 to 20 days",
+                                 "Low use - 1 to 10 days"))+
+  labs(title="Daily use of smart device")
+```
+![Uploading image.png…]()
+
 
 ​
