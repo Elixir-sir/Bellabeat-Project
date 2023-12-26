@@ -163,8 +163,8 @@ A quick search for any duplicate:
 
 ```R
 sum(duplicated(daily))
-* sum(duplicated(hourlysteps))
-* sum(duplicated(dailysleep))
+sum(duplicated(hourlysteps))
+sum(duplicated(dailysleep))
 ```
 
 #### Result: The result shows 0, 0 and 3 indicating no duplication in daily activities and hourly sleeps datasets. 3 duplicates in daily sleep which i will be handling next.
@@ -200,4 +200,147 @@ dailysleep <- rename_with(dailysleep, tolower)
 
 #### 4.4.5 Consistency of date and time columns
 I will concentrate on cleaning the date-time format for daily_activity and daily_sleep since I will be merging both data frames. Since the time component in the daily_sleep data frame is not needed, I will use 'as_date' instead of 'as_datetime
+```R
+daily <- daily %>%
+  rename(date = activitydate) %>%
+  mutate(date = as_date(date, format = "%m/%d/%Y"))
+
+dailysleep <- dailysleep %>%
+  rename(date = sleepday) %>%
+  mutate(date = as_date(date,format ="%m/%d/%Y %I:%M:%S %p" , tz=Sys.timezone()))
+```
+I will transform the date string into a date-time format for our hourly_steps dataset.
+
+```R
+hourlysteps<- hourlysteps %>% 
+  rename(date_time = activityhour) %>% 
+  mutate(date_time = as.POSIXct(date_time,format ="%m/%d/%Y %I:%M:%S %p" , tz=Sys.timezone()))
+```
+### 4.5 Merging Datasets <a class="anchor" id="merging_datasets_4_5"></a>
+I will merge the daily_activity and daily_sleep datasets to examine any correlation between variables, using id and date as their primary keys.
+```R
+daily_act_sleep <- merge(daily, dailysleep, by = c("id", "date"))
+glimpse(daily-act-sleep)
+```
+# <span style="color:#8fce00"> 5. Analyze Phase and Share Phase </span> <a class="anchor" id="analyze_phase_5"></a>
+I will analyze trends among Bellabeat's FitBit users to determine if that can assist me in refining BellaBeat's marketing strategy.
+### 5.1 Type of users per activity level <a class="anchor" id="type_of_users_per_activity_level"></a>
+Since I don't have any demographic variables from our sample, I want to determine the type of users with the data we have. I can classify the users by activity based on their daily step counts as suggested by the link below. The categorization of users is as follows:
+* Sedentary - Less than 5000 steps a day.
+* Lightly active - Between  5000 and 7499 steps a day. 
+* Fairly active - Between 7500 and 9999 steps a day.
+* Very active - More than 10000 steps a day. 
+​
+Classification has been performed as per the following article <https://www.10000steps.org.au/articles/counting-steps/>
+​
+First, I will compute the daily average of steps per user. Let's get coding!
+```R
+daily_average <- daily_act_sleep %>%
+  group_by(id) %>%
+  summarise (mean_daily_steps = mean(totalsteps), mean_daily_calories = mean(calories), mean_daily_sleep = mean(totalminutesasleep))
+```
+Now, I will categorize our users based on their daily average step counts.
+```R
+user_type <- daily_average %>%
+  mutate(user_type = case_when(
+    mean_daily_steps < 5000 ~ "sedentary",
+    mean_daily_steps >= 5000 & mean_daily_steps < 7499 ~ "lightly active", 
+    mean_daily_steps >= 7500 & mean_daily_steps < 9999 ~ "fairly active", 
+    mean_daily_steps >= 10000 ~ "very active"
+  ))
+```
+Now that there's a new column representing user types, I will generate a data frame that shows the percentage of each user type, making it easier to visualize them on a graph.
+```R
+user_type_percent <- user_type %>%
+  group_by(user_type) %>%
+  summarise(total = n()) %>%
+  mutate(totals = sum(total)) %>%
+  group_by(user_type) %>%
+  summarise(total_percent = total / totals) %>%
+  mutate(labels = scales::percent(total_percent))
+
+user_type_percent$user_type <- factor(user_type_percent$user_type , levels = c("very active", "fairly active", "lightly active", "sedentary"))
+```
+Below, it is evident that users are evenly distributed based on their activity, considering their daily step counts. This suggests that users across all activity levels use smart devices.
+```R
+user_type_percent %>%
+  ggplot(aes(x="",y=total_percent, fill=user_type)) +
+  geom_bar(stat = "identity", width = 1)+
+  coord_polar("y", start=0)+
+  theme_minimal()+
+  theme(axis.title.x= element_blank(),
+        axis.title.y = element_blank(),
+        panel.border = element_blank(), 
+        panel.grid = element_blank(), 
+        axis.ticks = element_blank(),
+        axis.text.x = element_blank(),
+        plot.title = element_text(hjust = 0.5, size=14, face = "bold")) +
+  scale_fill_manual(values = c("#85e085","#e6e600", "#ffd480", "#ff8080")) +
+  geom_text(aes(label = labels),
+            position = position_stack(vjust = 0.5))+
+  labs(title="User type distribution")
+```
+### 5.2 Steps and minutes asleep per weekday <a class="anchor" id="steps_and_minutes_asleep_per_weekday"></a>
+Now, I aim to determine the days of the week when users are most active and when they tend to sleep more. Additionally, I will check if users meet the recommended daily step and sleep goals.
+​
+Here, I am computing the weekdays using the date column, and I am calculating the average daily steps walked and minutes slept for each weekday too.
+```R
+weekday_steps_sleep <- daily_act_sleep %>%
+  mutate(weekday = weekdays(date))
+
+weekday_steps_sleep$weekday <-ordered(weekday_steps_sleep$weekday, levels=c("Monday", "Tuesday", "Wednesday", "Thursday",
+"Friday", "Saturday", "Sunday"))
+
+ weekday_steps_sleep <-weekday_steps_sleep%>%
+  group_by(weekday) %>%
+  summarize (dailysteps = mean(totalsteps), daily_sleep = mean(totalminutesasleep))
+```
+Let's go ahead with the plotting now.
+```R
+library(pacman)
+p_load(tidyverse, data.table,patchwork)
+```
+```R
+steps_perweekday <- ggplot(weekday_steps_sleep) +
+      geom_col(aes(weekday, dailysteps), fill = "#006699") +
+      geom_hline(yintercept = 7500) +
+      labs(title = "Daily steps per weekday", x= "", y = "") +
+      theme(axis.text.x = element_text(angle = 45,vjust = 0.5, hjust = 1))
+```
+```R
+sleep_perweekday <- ggplot(weekday_steps_sleep, aes(weekday, daily_sleep)) +
+      geom_col(fill = "#85e0e0") +
+      geom_hline(yintercept = 480) +
+      labs(title = "Minutes asleep per weekday", x= "", y = "") +
+      theme(axis.text.x = element_text(angle = 45,vjust = 0.5, hjust = 1))
+  ```
+Now, I will be using patchwork(R library) to arrange the plots as a single plot
+```R
+steps_perweekday + sleep_perweekday
+```
+In the charts above, we can deduce the following:
+​
+ * Users achieve the recommended daily step count of 7500 steps every day except on Sundays.
+​
+ * Users do not meet the recommended sleep duration of 8 hours.
+### 5.3 Hourly steps throughout the day <a class="anchor" id="hourly_steps_throughout_the_day"></a>
+​
+Now, let's look at the intensity dataset to get a glimpse of users' activeness during the day. But before then, let's quickly fix some formatting issues.
+```R
+intensity$ActivityHour=as.POSIXct(intensity$ActivityHour, format="%m/%d/%Y %I:%M:%S %p", tz=Sys.timezone())
+intensity$time <- format(intensity$ActivityHour, format = "%H:%M:%S")
+intensity$date <- format(intensity$ActivityHour, format = "%m/%d/%y")
+```
+Now, let's go!
+```R
+int_new <- intensity %>%
+  group_by(time) %>%
+  drop_na() %>%
+  summarise(mean_total_int = mean(TotalIntensity))
+​
+ggplot(data=int_new, aes(x=time, y=mean_total_int)) + geom_histogram(stat = "identity", fill='darkblue') +
+  theme(axis.text.x = element_text(angle = 90)) +
+  labs(title="Average Total Intensity vs. Time")
+```
+
 ​
